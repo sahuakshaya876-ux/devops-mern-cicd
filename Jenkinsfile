@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        SCANNER_HOME = tool 'sonarqube-scanner'
+    }
+
     stages {
 
         stage('Install Client Dependencies') {
@@ -23,7 +27,7 @@ pipeline {
             steps {
                 withSonarQubeEnv('SonarQube-Server') {
                     sh '''
-                        sonar-scanner \
+                        $SCANNER_HOME/bin/sonar-scanner \
                         -Dsonar.projectKey=MERN-ECommerce \
                         -Dsonar.projectName=MERN-ECommerce \
                         -Dsonar.sources=.
