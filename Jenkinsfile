@@ -3,8 +3,6 @@ pipeline {
 
     stages {
 
-       
-
         stage('Install Client Dependencies') {
             steps {
                 dir('client') {
@@ -17,6 +15,19 @@ pipeline {
             steps {
                 dir('server') {
                     sh 'npm install'
+                }
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube-Server') {
+                    sh '''
+                        sonar-scanner \
+                        -Dsonar.projectKey=MERN-ECommerce \
+                        -Dsonar.projectName=MERN-ECommerce \
+                        -Dsonar.sources=.
+                    '''
                 }
             }
         }
