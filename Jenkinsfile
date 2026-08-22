@@ -3,12 +3,7 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                git branch: 'master',
-                    url: 'https://github.com/sahuakshaya876-ux/devops-mern-cicd.git'
-            }
-        }
+       
 
         stage('Install Client Dependencies') {
             steps {
