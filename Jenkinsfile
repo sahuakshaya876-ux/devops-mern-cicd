@@ -1,3 +1,4 @@
+
 pipeline {
 
     agent any
@@ -28,9 +29,7 @@ pipeline {
         stage('Install Client Dependencies') {
             steps {
                 dir('client') {
-                    sh '''
-                        npm install
-                    '''
+                    sh 'npm install'
                 }
             }
         }
@@ -38,9 +37,7 @@ pipeline {
         stage('Install Server Dependencies') {
             steps {
                 dir('server') {
-                    sh '''
-                        npm install
-                    '''
+                    sh 'npm install'
                 }
             }
         }
@@ -67,38 +64,28 @@ pipeline {
         }
 
         stage('Quality Gate') {
-    steps {
-        timeout(time: 5, unit: 'MINUTES') {
-            waitForQualityGate abortPipeline: true
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
         }
-    }
-}
 
         stage('Docker Build Client') {
             steps {
-                sh '''
-                    docker build \
-                    -t mern-client:latest \
-                    ./client
-                '''
+                sh 'docker build -t mern-client:latest ./client'
             }
         }
 
         stage('Docker Build Server') {
             steps {
-                sh '''
-                    docker build \
-                    -t mern-server:latest \
-                    ./server
-                '''
+                sh 'docker build -t mern-server:latest ./server'
             }
         }
 
         stage('Docker Images') {
             steps {
-                sh '''
-                    docker images
-                '''
+                sh 'docker images'
             }
         }
     }
@@ -114,20 +101,4 @@ pipeline {
     }
 }
 
-stage('Docker Build Client') {
-    steps {
-        sh 'docker build -t mern-client ./client'
-    }
-}
 
-stage('Docker Build Server') {
-    steps {
-        sh 'docker build -t mern-server ./server'
-    }
-}
-
-stage('Docker Images') {
-    steps {
-        sh 'docker images'
-    }
-}
