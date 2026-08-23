@@ -59,10 +59,15 @@ pipeline {
         }
 
         stage('Docker Build Client') {
-            steps {
-                sh 'docker build -t mern-client:latest ./client'
-            }
-        }
+    steps {
+        sh '''
+            docker build \
+              --build-arg VITE_API_URL=http://13.206.84.110:5000 \
+              -t mern-client:latest \
+              ./client
+        '''
+    }
+}
 
         stage('Docker Build Server') {
             steps {
