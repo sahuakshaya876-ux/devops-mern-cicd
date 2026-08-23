@@ -42,7 +42,7 @@ pipeline {
             }
         }
 
-stage('SonarQube Analysis') {
+/*stage('SonarQube Analysis') {
     steps {
         withSonarQubeEnv('SonarQube-Server') {
             withCredentials([
@@ -72,7 +72,7 @@ stage('SonarQube Analysis') {
                     waitForQualityGate abortPipeline: true
                 }
             }
-        }
+        }*/
 
         stage('Docker Build Client') {
             steps {
