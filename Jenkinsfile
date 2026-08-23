@@ -43,25 +43,27 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('SonarQube-Server') {
-                    withCredentials([
-                        string(
-                            credentialsId: 'SonarQube-Token',
-                            variable: 'SONAR_TOKEN'
-                        )
-                    ]) {
-                        sh '''
-                            $SCANNER_HOME/bin/sonar-scanner \
-                            -Dsonar.projectKey=MERN-ECommerce \
-                            -Dsonar.projectName=MERN-ECommerce \
-                            -Dsonar.sources=. \
-                            -Dsonar.token=$SONAR_TOKEN
-                        '''
-                    }
-                }
+    steps {
+        withSonarQubeEnv('SonarQube-Server') {
+            withCredentials([
+                string(
+                    credentialsId: 'SonarQube-Token',
+                    variable: 'SONAR_TOKEN'
+                )
+            ]) {
+                sh '''
+                    $SCANNER_HOME/bin/sonar-scanner \
+                    -Dsonar.projectKey=MERN-ECommerce \
+                    -Dsonar.projectName=MERN-ECommerce \
+                    -Dsonar.sources=client,server \
+                    -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/**,**/coverage/**,**/*.min.js \
+                    -Dsonar.javascript.node.maxspace=512 \
+                    -Dsonar.token=$SONAR_TOKEN
+                '''
             }
         }
+    }
+}
 
         stage('Quality Gate') {
             steps {
