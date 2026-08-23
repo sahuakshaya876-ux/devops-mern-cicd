@@ -42,7 +42,7 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
+stage('SonarQube Analysis') {
     steps {
         withSonarQubeEnv('SonarQube-Server') {
             withCredentials([
@@ -56,7 +56,7 @@ pipeline {
                     -Dsonar.projectKey=MERN-ECommerce \
                     -Dsonar.projectName=MERN-ECommerce \
                     -Dsonar.sources=client,server \
-                    -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/**,**/coverage/**,**/*.min.js \
+                    -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/**,**/*.test.js,**/*.spec.js \
                     -Dsonar.javascript.node.maxspace=512 \
                     -Dsonar.token=$SONAR_TOKEN
                 '''
@@ -64,6 +64,7 @@ pipeline {
         }
     }
 }
+
 
         stage('Quality Gate') {
             steps {
