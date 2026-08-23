@@ -3,10 +3,7 @@ pipeline {
 
     agent any
 
-    environment {
-        SCANNER_HOME = tool 'sonarqube-scanner'
-    }
-
+   
     stages {
 
         stage('Checkout') {
@@ -41,38 +38,6 @@ pipeline {
                 }
             }
         }
-
-/*stage('SonarQube Analysis') {
-    steps {
-        withSonarQubeEnv('SonarQube-Server') {
-            withCredentials([
-                string(
-                    credentialsId: 'SonarQube-Token',
-                    variable: 'SONAR_TOKEN'
-                )
-            ]) {
-                sh '''
-                    $SCANNER_HOME/bin/sonar-scanner \
-                    -Dsonar.projectKey=MERN-ECommerce \
-                    -Dsonar.projectName=MERN-ECommerce \
-                    -Dsonar.sources=client,server \
-                    -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/**,**/*.test.js,**/*.spec.js \
-                    -Dsonar.javascript.node.maxspace=512 \
-                    -Dsonar.token=$SONAR_TOKEN
-                '''
-            }
-        }
-    }
-}*/
-
-
-       /* stage('Quality Gate') {
-            steps {
-                timeout(time: 5, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }*/
 
         stage('Docker Build Client') {
             steps {
