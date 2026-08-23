@@ -64,6 +64,15 @@ pipeline {
             }
         }
 
+        stage('Trivy Docker Image Scan') {
+    steps {
+        sh '''
+            trivy image --severity HIGH,CRITICAL mern-client:latest
+            trivy image --severity HIGH,CRITICAL mern-server:latest
+        '''
+    }
+}
+
         stage('Docker Images') {
             steps {
                 sh 'docker images'
