@@ -73,6 +73,40 @@ pipeline {
     }
 }
 
+    stage('ECR Login') {
+    steps {
+        sh '''
+            aws ecr get-login-password --region ap-south-1 | \
+            docker login --username AWS --password-stdin \
+            472506472516.dkr.ecr.ap-south-1.amazonaws.com
+        '''
+    }
+}
+
+stage('Tag Docker Images') {
+    steps {
+        sh '''
+            docker tag mern-client:latest \
+            472506472516.dkr.ecr.ap-south-1.amazonaws.com/mern-client:latest
+
+            docker tag mern-server:latest \
+            472506472516.dkr.ecr.ap-south-1.amazonaws.com/mern-server:latest
+        '''
+    }
+}
+
+stage('Push Images to ECR') {
+    steps {
+        sh '''
+            docker push \
+            472506472516.dkr.ecr.ap-south-1.amazonaws.com/mern-client:latest
+
+            docker push \
+            472506472516.dkr.ecr.ap-south-1.amazonaws.com/mern-server:latest
+        '''
+    }
+}
+
         stage('Docker Images') {
             steps {
                 sh 'docker images'
