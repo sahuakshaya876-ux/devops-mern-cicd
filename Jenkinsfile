@@ -39,6 +39,19 @@ pipeline {
             }
         }
 
+
+       stage('Trivy Filesystem Scan') {
+            steps {
+                sh '''
+                    trivy fs \
+                    --scanners vuln,secret \
+                    --skip-dirs node_modules \
+                    --skip-dirs .git \
+                    .
+                '''
+            }
+        }
+        
         stage('Docker Build Client') {
             steps {
                 sh 'docker build -t mern-client:latest ./client'
