@@ -113,3 +113,21 @@ pipeline {
         }
     }
 }
+
+stage('Docker Build Client') {
+    steps {
+        sh 'docker build -t mern-client ./client'
+    }
+}
+
+stage('Docker Build Server') {
+    steps {
+        sh 'docker build -t mern-server ./server'
+    }
+}
+
+stage('Docker Images') {
+    steps {
+        sh 'docker images'
+    }
+}
