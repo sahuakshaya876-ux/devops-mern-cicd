@@ -3,7 +3,12 @@ pipeline {
 
     agent any
 
-   
+    environment {
+        AWS_REGION = 'ap-south-1'
+        AWS_ACCOUNT_ID = '472506472516'
+        ECR_REGISTRY = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+    }
+
     stages {
 
         stage('Checkout') {
@@ -19,6 +24,8 @@ pipeline {
                     npm --version
                     git --version
                     docker --version
+                    aws --version
+                    trivy --version
                 '''
             }
         }
@@ -39,8 +46,7 @@ pipeline {
             }
         }
 
-
-       stage('Trivy Filesystem Scan') {
+        stage('Trivy Filesystem Scan') {
             steps {
                 sh '''
                     trivy fs \
@@ -51,7 +57,7 @@ pipeline {
                 '''
             }
         }
-        
+
         stage('Docker Build Client') {
             steps {
                 sh 'docker build -t mern-client:latest ./client'
@@ -65,47 +71,43 @@ pipeline {
         }
 
         stage('Trivy Docker Image Scan') {
-    steps {
-        sh '''
-            trivy image --severity HIGH,CRITICAL mern-client:latest
-            trivy image --severity HIGH,CRITICAL mern-server:latest
-        '''
-    }
-}
+            steps {
+                sh '''
+                    trivy image --severity HIGH,CRITICAL mern-client:latest
+                    trivy image --severity HIGH,CRITICAL mern-server:latest
+                '''
+            }
+        }
 
-    stage('ECR Login') {
-    steps {
-        sh '''
-            aws ecr get-login-password --region ap-south-1 | \
-            docker login --username AWS --password-stdin \
-            472506472516.dkr.ecr.ap-south-1.amazonaws.com
-        '''
-    }
-}
+        stage('ECR Login') {
+            steps {
+                sh '''
+                    aws ecr get-login-password --region "$AWS_REGION" | \
+                    docker login --username AWS --password-stdin "$ECR_REGISTRY"
+                '''
+            }
+        }
 
-stage('Tag Docker Images') {
-    steps {
-        sh '''
-            docker tag mern-client:latest \
-            472506472516.dkr.ecr.ap-south-1.amazonaws.com/mern-client:latest
+        stage('Tag Docker Images') {
+            steps {
+                sh '''
+                    docker tag mern-client:latest \
+                    "$ECR_REGISTRY/mern-client:latest"
 
-            docker tag mern-server:latest \
-            472506472516.dkr.ecr.ap-south-1.amazonaws.com/mern-server:latest
-        '''
-    }
-}
+                    docker tag mern-server:latest \
+                    "$ECR_REGISTRY/mern-server:latest"
+                '''
+            }
+        }
 
-stage('Push Images to ECR') {
-    steps {
-        sh '''
-            docker push \
-            472506472516.dkr.ecr.ap-south-1.amazonaws.com/mern-client:latest
-
-            docker push \
-            472506472516.dkr.ecr.ap-south-1.amazonaws.com/mern-server:latest
-        '''
-    }
-}
+        stage('Push Images to ECR') {
+            steps {
+                sh '''
+                    docker push "$ECR_REGISTRY/mern-client:latest"
+                    docker push "$ECR_REGISTRY/mern-server:latest"
+                '''
+            }
+        }
 
         stage('Docker Images') {
             steps {
@@ -124,5 +126,3 @@ stage('Push Images to ECR') {
         }
     }
 }
-
-
