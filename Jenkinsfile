@@ -56,7 +56,7 @@ pipeline {
                     -Dsonar.projectKey=MERN-ECommerce \
                     -Dsonar.projectName=MERN-ECommerce \
                     -Dsonar.sources=client,server \
-                    -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/**,**/*.test.js,**/*.spec.js \
+                   // -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/**,**/*.test.js,**/*.spec.js \
                     -Dsonar.javascript.node.maxspace=512 \
                     -Dsonar.token=$SONAR_TOKEN
                 '''
