@@ -165,6 +165,17 @@ pipeline {
             echo "Deployment completed."
 
             docker ps
+
+            echo "Waiting for application..."
+sleep 10
+
+echo "Checking backend..."
+curl -f http://localhost:5000
+
+echo "Checking frontend..."
+curl -f http://localhost:3000
+
+echo "Application is healthy!"
         '''
     }
 }
