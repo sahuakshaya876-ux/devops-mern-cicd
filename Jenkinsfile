@@ -152,15 +152,15 @@ pipeline {
             docker run -d \
                 --name mern-server \
                 -p 5000:5000 \
+                --env-file /var/lib/jenkins/mern-server.env \
                 "$ECR_REGISTRY/mern-server:latest"
 
             echo "Starting frontend..."
 
             docker run -d \
-  --name mern-server \
-  -p 5000:5000 \
-  --env-file ~/mern-server.env \
-  "$ECR_REGISTRY/mern-server:latest"
+                --name mern-client \
+                -p 3000:80 \
+                "$ECR_REGISTRY/mern-client:latest"
 
             echo "Deployment completed."
 
@@ -168,7 +168,6 @@ pipeline {
         '''
     }
 }
-
         stage('Docker Images') {
             steps {
                 sh 'docker images'
