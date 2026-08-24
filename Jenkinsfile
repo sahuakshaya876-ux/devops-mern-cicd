@@ -157,9 +157,10 @@ pipeline {
             echo "Starting frontend..."
 
             docker run -d \
-                --name mern-client \
-                -p 3000:80 \
-                "$ECR_REGISTRY/mern-client:latest"
+  --name mern-server \
+  -p 5000:5000 \
+  --env-file ~/mern-server.env \
+  "$ECR_REGISTRY/mern-server:latest"
 
             echo "Deployment completed."
 
