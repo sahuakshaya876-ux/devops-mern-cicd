@@ -9,7 +9,7 @@ pipeline {
         ECR_REGISTRY = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
 
         // Backend API
-        VITE_API_URL = '/api'
+        VITE_API_URL = ''
     }
 
     stages {
