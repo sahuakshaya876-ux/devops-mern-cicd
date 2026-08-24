@@ -123,6 +123,51 @@ pipeline {
             }
         }
 
+
+        stage('Deploy to EC2') {
+    steps {
+        sh '''
+            echo "Logging into ECR..."
+
+            aws ecr get-login-password --region "$AWS_REGION" | \
+            docker login \
+            --username AWS \
+            --password-stdin "$ECR_REGISTRY"
+
+            echo "Pulling latest images..."
+
+            docker pull "$ECR_REGISTRY/mern-client:latest"
+            docker pull "$ECR_REGISTRY/mern-server:latest"
+
+            echo "Stopping old containers..."
+
+            docker stop mern-client || true
+            docker rm mern-client || true
+
+            docker stop mern-server || true
+            docker rm mern-server || true
+
+            echo "Starting backend..."
+
+            docker run -d \
+                --name mern-server \
+                -p 5000:5000 \
+                "$ECR_REGISTRY/mern-server:latest"
+
+            echo "Starting frontend..."
+
+            docker run -d \
+                --name mern-client \
+                -p 3000:80 \
+                "$ECR_REGISTRY/mern-client:latest"
+
+            echo "Deployment completed."
+
+            docker ps
+        '''
+    }
+}
+
         stage('Docker Images') {
             steps {
                 sh 'docker images'
