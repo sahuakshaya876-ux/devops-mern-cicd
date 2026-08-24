@@ -7,6 +7,9 @@ pipeline {
         AWS_REGION = 'ap-south-1'
         AWS_ACCOUNT_ID = '472506472516'
         ECR_REGISTRY = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+
+        // Backend API
+        VITE_API_URL = 'http://13.235.33.67:5000'
     }
 
     stages {
@@ -59,19 +62,23 @@ pipeline {
         }
 
         stage('Docker Build Client') {
-    steps {
-        sh '''
-            docker build \
-              --build-arg VITE_API_URL=http://13.235.33.67:5000 \
-              -t mern-client:latest \
-              ./client
-        '''
-    }
-}
+            steps {
+                sh '''
+                    docker build \
+                    --build-arg VITE_API_URL="$VITE_API_URL" \
+                    -t mern-client:latest \
+                    ./client
+                '''
+            }
+        }
 
         stage('Docker Build Server') {
             steps {
-                sh 'docker build -t mern-server:latest ./server'
+                sh '''
+                    docker build \
+                    -t mern-server:latest \
+                    ./server
+                '''
             }
         }
 
@@ -88,7 +95,9 @@ pipeline {
             steps {
                 sh '''
                     aws ecr get-login-password --region "$AWS_REGION" | \
-                    docker login --username AWS --password-stdin "$ECR_REGISTRY"
+                    docker login \
+                    --username AWS \
+                    --password-stdin "$ECR_REGISTRY"
                 '''
             }
         }
@@ -122,6 +131,7 @@ pipeline {
     }
 
     post {
+
         success {
             echo 'PIPELINE SUCCESSFUL'
         }
