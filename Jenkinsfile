@@ -52,13 +52,17 @@ pipeline {
         stage('SonarQube Analysis') {
     steps {
         withSonarQubeEnv('SonarQube-Server') {
-            sh '''
-                sonarqube-scanner \
-                -Dsonar.projectKey=MERN-ECommerce \
-                -Dsonar.projectName=MERN-ECommerce \
-                -Dsonar.sources=client/src,server \
-                -Dsonar.exclusions="**/node_modules/**,**/dist/**"
-            '''
+            script {
+                def scannerHome = tool 'sonarqube-scanner'
+
+                sh """
+                    ${scannerHome}/bin/sonar-scanner \
+                    -Dsonar.projectKey=MERN-ECommerce \
+                    -Dsonar.projectName=MERN-ECommerce \
+                    -Dsonar.sources=client/src,server \
+                    -Dsonar.exclusions="**/node_modules/**,**/dist/**"
+                """
+            }
         }
     }
 }
