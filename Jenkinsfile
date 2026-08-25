@@ -49,6 +49,20 @@ pipeline {
             }
         }
 
+        stage('SonarQube Analysis') {
+    steps {
+        withSonarQubeEnv('SonarQube') {
+            sh '''
+                sonar-scanner \
+                -Dsonar.projectKey=MERN-ECommerce \
+                -Dsonar.projectName=MERN-ECommerce \
+                -Dsonar.sources=client/src,server \
+                -Dsonar.exclusions="**/node_modules/**,**/dist/**"
+            '''
+        }
+    }
+}
+        
         stage('Trivy Filesystem Scan') {
             steps {
                 sh '''
