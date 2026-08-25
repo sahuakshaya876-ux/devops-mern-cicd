@@ -51,7 +51,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
     steps {
-        withSonarQubeEnv('SonarQube') {
+        withSonarQubeEnv('SonarQube-Server') {
             sh '''
                 sonar-scanner \
                 -Dsonar.projectKey=MERN-ECommerce \
