@@ -53,7 +53,7 @@ pipeline {
     steps {
         withSonarQubeEnv('SonarQube-Server') {
             sh '''
-                sonar-scanner \
+                sonarqube-scanner \
                 -Dsonar.projectKey=MERN-ECommerce \
                 -Dsonar.projectName=MERN-ECommerce \
                 -Dsonar.sources=client/src,server \
